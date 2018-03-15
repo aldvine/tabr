@@ -15,30 +15,29 @@
 <body style="text-align:center">
     <h2>Projet Optimisation pour la gestion</h2>
     <hr>
-    <h3>Instance If (fichier)</h3>
+    <h3>Fichier vers TABR</h3>
     <input type="file" name="file" id="fichier" />
     <button type="button" onclick="fichier()" id="startFile" style="visibility: hidden">Lancer la lecture du fichier</button>
 
 
     <br>
     <hr>
-    <h3>Instance Ic (clavier)</h3>
-    <input type="text" placeholder="m : n : d1 ... dn" id="clavier" />
-    <button type="button" onclick="clavier()">Lancer la lecture du texte</button>
+    <h3>vérification</h3>
+
+    <button type="button" onclick="verification()">Lancer la vérification</button>
 
     <hr>
-
-    <h3>Instance Ig (génération)</h3>
-	<p>m : <input type="text" placeholder="nombre machine" id="mGeneration" />     n : <input type="text" placeholder="nombre job" id="nGeneration" /></p>
-	<p>k : <input type="text" placeholder="nombre instance" id="kGeneration" />     min : <input type="text" placeholder="durée minimum" id="minGeneration" /></p>
-	<p>max : <input type="text" placeholder="durée maximum" id="maxGeneration" />     Nom fichier : <input type="text" placeholder="nom fichier" id="nomFichier" /></p>
-    <button type="button" onclick="generation()">Lancer la génération</button>
-	<br>
+    <h3>TABR vers Fichier</h3> 
+    Nom fichier :
+    <input type="text" placeholder="nom fichier" id="nomFichier" />
+    </p>
+    <button type="button" onclick="TABR_to_file()">Lancer la génération</button>
+    <br>
     <hr>
     <h3>Résultats</h3>
     <pre id="resultat"></pre>
 </body>
-<script src="FileSaver.js" ></script>
+<script src="FileSaver.js"></script>
 <script src="main.js"></script>
 
 </html>
