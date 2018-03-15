@@ -53,13 +53,38 @@ function fichier() {
     if (!file) {
         return;
     }
-    //Récupère les données du fichier
+    //R�cup�re les donn�es du fichier
     var reader = new FileReader();
-    var contents;
+    var texte;
+    var tabLigne;
+	var tabDebFin;
+    var tabTABR;
+    var tabABR;
     reader.onload = function (e) {
-        contents = e.target.result;
-        console.log(contents);
-        calcul(contents);
+        texte = e.target.result;
+		console.log(texte);
+		tabLigne = texte.split('\n');
+		console.log(tabLigne);
+		for (let index1 = 0; index1 < tabLigne.length; index1++) {
+
+            tabABR = tabLigne[index1].split(';');
+			console.log(tabABR);
+			tabDebFin = tabABR[0].split(':');
+			console.log(tabDebFin);
+			//tabTABR[index1] = new TABR(tabDebFin[0],tabDebFin[1],tabABR[1]);
+        }
+
+		setResult(texte);
     };
     reader.readAsText(file);
+}
+
+//Permet de clean l'affichage du r�sultat
+function clearResult() {
+    document.getElementById("resultat").innerHTML = "";
+}
+
+//Permet l'affichage du r�sultat
+function setResult(texte) {
+    document.getElementById("resultat").append(texte + "\n");
 }
