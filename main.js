@@ -240,31 +240,33 @@ function verification() {
 //Permet l'insertion d'un entier rentré par l'utilisateur dans le TABR
 function insertion_entier(){
 	clearResult();
-	//On récupère l'entier
-	var entier = document.getElementById("entier").value;
-	entier = parseInt(entier);
-	//On vérifie si la saisie est un entier
-	if(isNaN(entier)){
-		setResult("Erreur saisie entier");
-	} else {
-		let index = 0;
-		let error = false;
-		//On vérifie pour chaque intervalle si on peut insérer l'entier
-		do{
-			if(entier>= TABR[index].debut && entier <= TABR[index].fin){
-				//Si l'entier appartient à un intervalle, on utilise la fonction, insertion de la classe abr
-				TABR[index].abr.insertion(TABR[index].abr,entier);
-				console.log(TABR);
-				setResult("Entier inséré");
-			} else {
-				//Si l'entier se situe entre deux intervalles alors il y a une erreur
-				if(entier > TABR[index].fin && entier < TABR[index+1].debut){
-					setResult("L'entier ne peut pas être inséré car il n'entre dans aucun des intervalles");
-					error = true;
+	if(verification()){
+		//On récupère l'entier
+		var entier = document.getElementById("entier").value;
+		entier = parseInt(entier);
+		//On vérifie si la saisie est un entier
+		if(isNaN(entier)){
+			setResult("Erreur saisie entier");
+		} else {
+			let index = 0;
+			let error = false;
+			//On vérifie pour chaque intervalle si on peut insérer l'entier
+			do{
+				if(entier>= TABR[index].debut && entier <= TABR[index].fin){
+					//Si l'entier appartient à un intervalle, on utilise la fonction, insertion de la classe abr
+					TABR[index].abr.insertion(TABR[index].abr,entier);
+					console.log(TABR);
+					setResult("Entier inséré");
+				} else {
+					//Si l'entier se situe entre deux intervalles alors il y a une erreur
+					if(entier > TABR[index].fin && entier < TABR[index+1].debut){
+						setResult("L'entier ne peut pas être inséré car il n'entre dans aucun des intervalles");
+						error = true;
+					}
 				}
-			}
-			index++;
-		}while(index!=TABR.length && !error);
+				index++;
+			}while(index!=TABR.length && !error);
+		}
 	}
 }
 //Permet de clean l'affichage du r�sultat
