@@ -193,13 +193,17 @@ function verification() {
                 setResult("Erreur à la ligne " + (index + 1) + " : debut>fin ");
                 error = true;
             }
-
-            if (TABR[TABR.length - 1].fin == element.debut) {
-                setResult("Erreur à la ligne " + (index + 1) + " : deux intervalles ne peuvent se chevauchés");
-                error = true;
-            } else if (TABR[TABR.length - 1].fin < element.debut) {
-                setResult("Erreur à la ligne " + (index + 1) + " : le TABR n'es pas ordonné par ordre croissant");
-                error = true;
+            //bug à corrigé
+            console.log(index);
+            if (index > 0) {
+                if (TABR[index - 1].fin == element.debut) {
+                    setResult("Erreur à la ligne " + (index + 1) + " : deux intervalles ne peuvent se chevauchés");
+                    error = true;
+                } 
+                else if (TABR[index - 1].fin > element.debut) {
+                    setResult("Erreur à la ligne " + (index + 1) + " : le TABR n'es pas ordonné par ordre croissant");
+                    error = true;
+                }
             }
             test_tab = new Array;
             // console.log(test_tab);
