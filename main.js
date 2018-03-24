@@ -109,7 +109,7 @@ function createTABR(texte) {
     tabLigne.forEach(function (element, index) {
 
         let tabABR = element.split(';');
-
+	
         tabDebFin = tabABR[0].split(':');
         let debut = parseInt(tabDebFin[0]);
         let fin = parseInt(tabDebFin[1]);
@@ -193,6 +193,7 @@ function verification() {
                 setResult("Erreur à la ligne " + (index + 1) + " : debut>fin ");
                 error = true;
             }
+<<<<<<< HEAD
             //bug à corrigé
             console.log(index);
             if (index > 0) {
@@ -205,6 +206,19 @@ function verification() {
                     error = true;
                 }
             }
+=======
+			console.log(index);
+			if(index !=0){
+				console.log(TABR[index - 1].fin);
+				if (TABR[index - 1].fin == element.debut) {
+					setResult("Erreur à la ligne " + (index + 1) + " : deux intervalles ne peuvent se chevauchés");
+					error = true;
+				} else if (TABR[index - 1].fin > element.debut) {
+					setResult("Erreur à la ligne " + (index + 1) + " : le TABR n'es pas ordonné par ordre croissant");
+					error = true;
+				}
+			}
+>>>>>>> 90fe3c4cbfb3130149a449fd363366b6b235b7c4
             test_tab = new Array;
             // console.log(test_tab);
             element.abr.infixe_to_tab(element.abr);
@@ -232,7 +246,43 @@ function verification() {
     if (!error) {
 
         setResult("le TABR est bien rempli");
-    }
+		return 1;
+    } else {
+		return 0;
+	}
+}
+
+//Permet l'insertion d'un entier rentré par l'utilisateur dans le TABR
+function insertion_entier(){
+	clearResult();
+	if(verification()){
+		//On récupère l'entier
+		var entier = document.getElementById("entier").value;
+		entier = parseInt(entier);
+		//On vérifie si la saisie est un entier
+		if(isNaN(entier)){
+			setResult("Erreur saisie entier");
+		} else {
+			let index = 0;
+			let error = false;
+			//On vérifie pour chaque intervalle si on peut insérer l'entier
+			do{
+				if(entier>= TABR[index].debut && entier <= TABR[index].fin){
+					//Si l'entier appartient à un intervalle, on utilise la fonction, insertion de la classe abr
+					TABR[index].abr.insertion(TABR[index].abr,entier);
+					console.log(TABR);
+					setResult("Entier inséré");
+				} else {
+					//Si l'entier se situe entre deux intervalles alors il y a une erreur
+					if(entier > TABR[index].fin && entier < TABR[index+1].debut){
+						setResult("L'entier ne peut pas être inséré car il n'entre dans aucun des intervalles");
+						error = true;
+					}
+				}
+				index++;
+			}while(index!=TABR.length && !error);
+		}
+	}
 }
 //Permet de clean l'affichage du r�sultat
 function clearResult() {
