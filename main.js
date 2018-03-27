@@ -2,6 +2,7 @@
 var TABR = new Array;
 var Chaine_TABR;
 var test_tab = new Array;
+var tamp_entier;
 
 // classe case qui stocke l'abr, et l'intervale
 class Case {
@@ -25,7 +26,9 @@ class ABR {
         this.sag = null;
         this.sad = null;
     }
-    // insetion d'une valeur dans l'arbre
+    // insertion adapté du cours car impossible de remplacer l'instance de l'objet
+    //  par une autre directement
+    // on peut remplacer uniquement ses valeurs
     insertion(abr, val) {
 
         if (val <= abr.val) {
@@ -76,6 +79,69 @@ class ABR {
             this.infixe_to_tab(abr.sag);
 
             this.infixe_to_tab(abr.sad);
+        }
+    }
+    // recherche de la valeur
+    rechercher(abr, entier) {
+        if (abr != null) {
+            if (entier == abr.val) {
+                // trouvé
+                return true;
+            } else {
+                if (entier < abr.val) {
+                    return this.rechercher(abr.sag, entier);
+                } else {
+                    return this.rechercher(abr.sad, entier);
+                }
+            }
+        } else {
+            // pas trouvé
+            return false;
+        }
+    }
+    // supression d'une valeur : adapté du cours car impossible de remplacer l'instance de l'objet
+    //  par une autre directement
+    // on peut remplacer uniquement ses valeurs, on retourne la valeur de l'arbre .
+    // retourn le nouvel abr.
+    suppression(abr, entier) {
+        if (abr != null) {
+            if (entier < abr.val) {
+                // trouvé
+                abr.sag = this.suppression(abr.sag, entier);
+                return abr;
+            } else {
+                if (entier > abr.val) {
+                    abr.sad = this.suppression(abr.sad, entier);
+                    return abr;
+                } else {
+                    if (abr.sag == null) {
+
+                        abr = abr.sad;
+                        return abr;
+                    } else {
+                        if (abr.sad == null) {
+                            abr = abr.sag;
+                            return abr;
+                        } else {
+                            abr.sag = this.supprimax(abr.sag);
+                            abr.val = tamp_entier;
+                            return abr;
+                        }
+
+                    }
+                }
+            }
+        }
+    }
+    // adptation de la fonction supprimax du cours
+    supprimax(abr) {
+        if (abr.sad == null) {
+            tamp_entier = abr.val;
+            abr = abr.sag;
+            return abr;
+        } else {
+            abr.sad = this.supprimax(abr.sad, entier);
+            return abr
         }
     }
 }
@@ -154,7 +220,9 @@ function createTABR(texte) {
 // creation de la chaine à inserer dans le fichier
 function creation_chaine() {
 
+   
     Chaine_TABR = TABR[0].debut + ":" + TABR[0].fin + ";" // premier remplissage 
+    
     TABR.forEach(function (element, index) {
 
         Chaine_TABR += element.debut + ":" + element.fin + ";" // cette ligne est ignoré 
@@ -170,10 +238,11 @@ function creation_chaine() {
 // transforme l'objet TABR vers une chaine à écrire dans un fichier
 function TABR_to_file() {
 
-    clearResult();
+    // clearResult();
     if (TABR.length > 0) {
         // verifie si le TABR est correct avant tout traitement
         if (verification() == 1) {
+            clearResult();
             var nomFichier = document.getElementById("nomFichier").value;
             creation_chaine();
             setResult(Chaine_TABR);
@@ -319,7 +388,7 @@ function insertion_entier() {
 }
 
 
-//Permet la suppression d'un entier (A faire)
+//Permet la suppression d'un entier 
 function suppression_entier() {
     //On récupère l'entier
 
@@ -343,23 +412,38 @@ function suppression_entier() {
             } else {
                 let index = 0;
                 let fin = false;
-                //On vérifie pour chaque intervalle si on peut insérer l'entier
+                //On vérifie pour chaque intervalle si on peut supprimé l'entier
                 do {
                     // console.log(index); // compte le nombre de parcours
-                    // on vérifie qu'il fait partie de l'intervale de la case 
+                    // on vérifie que l'entier à supprimer peut faire partie de l'intervale de la case 
                     if (entier >= TABR[index].debut && entier <= TABR[index].fin) {
-                        //Si l'entier appartient à un intervalle, on utilise la fonction, insertion de la classe abr
-                        TABR[index].abr.insertion(TABR[index].abr, entier);
-                        // console.log(TABR);
-                        setResult("Entier inséré");
-                        creation_chaine();
-                        setResult(Chaine_TABR);
+                        // on test is l'entier est present dans l'abr
+                        let trouve = TABR[index].abr.rechercher(TABR[index].abr, entier);
+                        // entier trouve
+                        if (trouve) {
+                            //Si l'entier appartient à un ABR, on utilise la fonction, supression de la classe abr
+
+                            TABR[index].abr = TABR[index].abr.suppression(TABR[index].abr, entier);
+
+                            setResult("L'entier entier " + entier + " a été supprimé");
+
+                            // si l'abr est vide arpres une suppression, on supprime la case du tableau également
+                            if (TABR[index].abr == null) {
+                                TABR.splice(index, 1);
+                                setResult("L'ABR est vide, la Case est également supprimé");
+                            }
+                            // bug affichage si c'est la premiere case qui est supprimé, erreur introuvable
+                            creation_chaine();
+                            setResult(Chaine_TABR);
+                        } else {
+                            setResult("L'entier ne peut pas être supprimé car il ne fait pas partie d'un ABR");
+                        }
                         fin = true;
                     }
                     index++;
                 } while (index != TABR.length && !fin);
                 if (index >= TABR.length) {
-                    setResult("Aucun intervalle ne peut contenir l'entier saisi");
+                    setResult("Aucun intervalle ne contient l'entier saisi");
                 }
             }
         } else {
