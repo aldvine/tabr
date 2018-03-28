@@ -10,7 +10,13 @@ class Case {
         this.debut = debut;
         this.fin = fin;
 
-        this.abr = new ABR(parseInt(tab[0]));
+        // si c'est un arbre vide 
+        if (tab[0].trim() == 'null') {
+            this.abr = null;
+        } else { // sinon on le rempli avec une premiere valeur
+
+            this.abr = new ABR(parseInt(tab[0]));
+        }
         // console.log("tab ",tab)
         tab.splice(0, 1);
         tab.forEach(element => {
@@ -217,23 +223,47 @@ function createTABR(texte) {
     setResult(texte);
 }
 
+function affichage() {
+    if(verification()==1){
+        clearResult();
+        creation_chaine();
+        if (Chaine_TABR) {
+            setResult(Chaine_TABR);
+        } else {
+            setResult("chaine vide");
+        }
+    }else{
+        clearResult();
+        creation_chaine();
+        if (Chaine_TABR) {
+            setResult(Chaine_TABR);
+        } else {
+            setResult("chaine vide");
+        }
+    }
+  
+}
 // creation de la chaine à inserer dans le fichier
 function creation_chaine() {
 
-   
-    Chaine_TABR = TABR[0].debut + ":" + TABR[0].fin + ";" // premier remplissage 
-    
+    Chaine_TABR = "";
     TABR.forEach(function (element, index) {
 
-        Chaine_TABR += element.debut + ":" + element.fin + ";" // cette ligne est ignoré 
-        element.abr.prefixe_to_chaine(element.abr);
-        Chaine_TABR = Chaine_TABR.substring(Chaine_TABR.length - 1, 1); // retrait du dernier ":"
+        Chaine_TABR += element.debut + ":" + element.fin + ";"; // cette ligne est ignoré 
+        if (TABR[index].abr == null) {
+            Chaine_TABR += "null";
+        } else {
+            element.abr.prefixe_to_chaine(element.abr);
+            Chaine_TABR = Chaine_TABR.substring(0, Chaine_TABR.length - 1); // retrait du dernier ":"
+        }
+
         Chaine_TABR += "\n";
     });
     // correction d'un bug aleatoire qui ecrit un caractère en debut de chaine dans certains cas
     if (isNaN(parseInt(Chaine_TABR[0]))) {
         Chaine_TABR = Chaine_TABR.substring(1);
     }
+
 }
 // transforme l'objet TABR vers une chaine à écrire dans un fichier
 function TABR_to_file() {
@@ -247,6 +277,7 @@ function TABR_to_file() {
             creation_chaine();
             setResult(Chaine_TABR);
             if (nomFichier) {
+
                 //On récupère les données dans résultats
                 var resultat = document.getElementById("resultat").textContent;
                 //On créer un objet blob contenant le résultat
@@ -254,6 +285,7 @@ function TABR_to_file() {
                     type: 'plain/text',
                     endings: 'native'
                 });
+
                 //On sauvegarde le résultat dans un fichier selon le nom saisi dans le formulaire
                 saveAs(blob, nomFichier + ".txt");
             } else {
@@ -303,33 +335,40 @@ function verification() {
             // vérification des ABRs , un parcours infixe permet de construire un tableau trié par ordre croissant
             test_tab = new Array;
             // console.log(test_tab);
-            element.abr.infixe_to_tab(element.abr);
-            // test de ABR 
-            let i = 0;
-            let abr_error = false;
-            do {
-                if (test_tab[i] > test_tab[i + 1]) {
-                    error = true;
-                    setResult("Erreur à la ligne " + (index + 1) + " : le TABR contient un ABR erroné");
-                    abr_error = true;
-                }
-                i++;
-            } while (i < test_tab.length && !abr_error);
-            // on verifie que les valeurs qui sont dans l'abr font partie de l'intervalle,
-            //    il suffit de vérifier le premier et dernier element du tableau trié
-            if (!abr_error) {
-                // console.log(test_tab[0] + '<' + element.debut + "||" + test_tab[test_tab.length - 1] + ">" + element.fin)
-                if (test_tab[0] < element.debut || test_tab[test_tab.length - 1] > element.fin) {
-                    setResult("Erreur à la ligne " + (index + 1) + " : une valeur n'est pas placé dans le bon intervale");
-                    error = true;
+            if (element.abr != null) {
+                element.abr.infixe_to_tab(element.abr);
+                // test de ABR 
+                let i = 0;
+                let abr_error = false;
+                do {
+                    if (test_tab[i] > test_tab[i + 1]) {
+                        error = true;
+                        setResult("Erreur à la ligne " + (index + 1) + " : le TABR contient un ABR erroné");
+                        abr_error = true;
+                    }else if(isNaN(test_tab[i])){
+                        error = true;
+                        setResult("Erreur à la ligne " + (index + 1) + " : le TABR contient un ABR avec une valeur qui n'est pas un entier");
+                        abr_error = true;
+                    }
+                    i++;
+                } while (i < test_tab.length && !abr_error);
+                // on verifie que les valeurs qui sont dans l'abr font partie de l'intervalle,
+                //    il suffit de vérifier le premier et dernier element du tableau trié
+                if (!abr_error) {
+                    // console.log(test_tab[0] + '<' + element.debut + "||" + test_tab[test_tab.length - 1] + ">" + element.fin)
+                    if (test_tab[0] < element.debut || test_tab[test_tab.length - 1] > element.fin) {
+                        setResult("Erreur à la ligne " + (index + 1) + " : une valeur n'est pas placé dans le bon intervale");
+                        error = true;
+                    }
                 }
             }
-
         });
     }
     // si pas d'erreur le tableau est bien rempli.
     if (!error) {
         setResult("le TABR est bien rempli");
+        creation_chaine();
+        setResult(Chaine_TABR);
         return 1;
     } else {
         return 0;
@@ -364,7 +403,11 @@ function insertion_entier() {
                     // on vérifie qu'il fait partie de l'intervale de la case 
                     if (entier >= TABR[index].debut && entier <= TABR[index].fin) {
                         //Si l'entier appartient à un intervalle, on utilise la fonction, insertion de la classe ABR
-                        TABR[index].abr.insertion(TABR[index].abr, entier);
+                        if (TABR[index].abr == null) {
+                            TABR[index].abr = new ABR(entier);
+                        } else {
+                            TABR[index].abr.insertion(TABR[index].abr, entier);
+                        }
                         // console.log(TABR);
                         setResult("Entier inséré");
                         // creation de la nouvelle chaine du TABR et affichage de celle-ci dans le bloc resultat
@@ -384,7 +427,7 @@ function insertion_entier() {
             setResult("Impossible d'inserer la valeur, le TABR n'est pas correct");
         }
     }
-    console.log(TABR);
+    console.log("TABR", TABR);
 }
 
 
@@ -418,31 +461,34 @@ function suppression_entier() {
                     // on vérifie que l'entier à supprimer peut faire partie de l'intervale de la case 
                     if (entier >= TABR[index].debut && entier <= TABR[index].fin) {
                         // on test is l'entier est present dans l'abr
-                        let trouve = TABR[index].abr.rechercher(TABR[index].abr, entier);
-                        // entier trouve
-                        if (trouve) {
-                            //Si l'entier appartient à un ABR, on utilise la fonction, supression de la classe abr
-
-                            TABR[index].abr = TABR[index].abr.suppression(TABR[index].abr, entier);
-
-                            setResult("L'entier entier " + entier + " a été supprimé");
-
-                            // si l'abr est vide arpres une suppression, on supprime la case du tableau également
-                            if (TABR[index].abr == null) {
-                                TABR.splice(index, 1);
-                                setResult("L'ABR est vide, la Case est également supprimé");
-                            }
-                            // bug affichage si c'est la premiere case qui est supprimé, erreur introuvable
-                            creation_chaine();
-                            setResult(Chaine_TABR);
+                        if (TABR[index].abr == null) {
+                            setResult("L'entier ne peut pas être supprimé car il ne fait pas partie d'un ABR (ABR vide)");
                         } else {
-                            setResult("L'entier ne peut pas être supprimé car il ne fait pas partie d'un ABR");
+                            let trouve = TABR[index].abr.rechercher(TABR[index].abr, entier);
+                            // entier trouve
+                            if (trouve) {
+                                //Si l'entier appartient à un ABR, on utilise la fonction, supression de la classe abr
+
+                                TABR[index].abr = TABR[index].abr.suppression(TABR[index].abr, entier);
+                                // if(isNaN(TABR[index].abr.val)){
+                                //     TABR[index].abr=null;
+                                // }
+
+                                setResult("L'entier entier " + entier + " a été supprimé");
+
+                                creation_chaine();
+                                setResult(Chaine_TABR);
+
+                            } else {
+                                setResult("L'entier ne peut pas être supprimé car il ne fait pas partie d'un ABR");
+                            }
                         }
+
                         fin = true;
                     }
                     index++;
                 } while (index != TABR.length && !fin);
-                if (index >= TABR.length) {
+                if (index > TABR.length) {
                     setResult("Aucun intervalle ne contient l'entier saisi");
                 }
             }
@@ -451,7 +497,7 @@ function suppression_entier() {
             setResult("Impossible de supprimer la valeur, le TABR n'est pas correct");
         }
     }
-    console.log(TABR);
+    console.log("TABR", TABR);
 }
 // permet de fusionner deux cases du TABR 
 function fusion_TABR() {
@@ -480,17 +526,23 @@ function fusion_TABR() {
                     TABR[indice].fin = TABR[indice + 1].fin;
 
                     test_tab = new Array();
-                    TABR[indice + 1].abr.prefixe_to_tab(TABR[indice + 1].abr);
+                    if (TABR[indice + 1].abr != null) {
+                        TABR[indice + 1].abr.prefixe_to_tab(TABR[indice + 1].abr);
+                    }
                     TABR.splice(indice + 1, 1);
                     // insertion des élements de l'ABR indice i+1 dans l'ABR indice i
                     test_tab.forEach(element => {
-                        TABR[indice].abr.insertion(TABR[indice].abr, element);
+                        if (TABR[indice].abr == null) {
+                            TABR[indice].abr = new ABR(element);
+                        } else {
+                            TABR[indice].abr.insertion(TABR[indice].abr, element);
+                        }
                     });
                     // affichage du résultat
                     setResult("Deux cases du TABR on été fusionné");
                     creation_chaine();
                     setResult(Chaine_TABR);
-                    console.log(TABR); //affichage dans la console de debug
+                    console.log("TABR", TABR); //affichage dans la console de debug
                 }
             }
         } else {
@@ -518,8 +570,12 @@ function TABR_vers_ABR() {
         } else {
             test_tab = new Array();
             TABR.forEach(function (element, index) {
-                element.abr.prefixe_to_tab(element.abr);
+                if (element.abr != null) {
+                    element.abr.prefixe_to_tab(element.abr);
+                }
+
             });
+
             // ajout de la première valeur racine
             arbre = new ABR(test_tab[0]);
             // console.log("tab ",tab)
@@ -528,12 +584,13 @@ function TABR_vers_ABR() {
             test_tab.forEach(function (element) {
                 arbre.insertion(arbre, element);
             });
-            console.log(arbre); // affichage de l'arbre dans la console debug
 
         }
 
         // ********* affichage du resultats dans le bloc Resultat
-        setResult("Création de l'ABR reussi !")
+        setResult("Création de l'ABR reussi ! (F12 pour afficher la console pour + d'infos)")
+
+        console.log("arbre", arbre); // affichage de l'arbre dans la console debug
         // *********** affichage parcours prefixe 
         Chaine_TABR = "" + arbre.val;
         arbre.prefixe_to_chaine(arbre);
