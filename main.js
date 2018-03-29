@@ -1,9 +1,9 @@
-// variables globales
+// ****** variables globales ********
 var TABR = new Array;
 var Chaine_TABR;
 var test_tab = new Array;
 var tamp_entier;
-
+// ***********
 // classe case qui stocke l'abr, et l'intervale
 class Case {
     constructor(debut, fin, tab) {
@@ -200,31 +200,33 @@ function createTABR(texte) {
             TABR.push(new Case(debut, fin, tabABR));
         }
     });
-    // affichage de l'objet dans la console de debuggage 
-    // sur navigateur F12 --> onglet console
-    console.log("TABR", TABR);
-    setResult(texte);
+    // on verifie que le TABR est bien rempli sinon on le reinitialise
+    //  car aucune autre action n'est possible si le TABR n'est pas correct.
+    if (verification() == 1) {
+        // affichage de l'objet dans la console de debuggage 
+        // sur navigateur F12 --> onglet console
+        clearResult();
+        setResult("TABR bien rempli");
+        console.log("TABR", TABR);
+        setResult(texte);
+    } else {
+        TABR = new Array();
+        setResult("Le TABR n'est pas correctement rempli");
+    }
+
 }
 
+// fonction d'affichage
 function affichage() {
-    if(verification()==1){
-        clearResult();
-        creation_chaine();
-        if (Chaine_TABR) {
-            setResult(Chaine_TABR);
-        } else {
-            setResult("chaine vide");
-        }
-    }else{
-        clearResult();
-        creation_chaine();
-        if (Chaine_TABR) {
-            setResult(Chaine_TABR);
-        } else {
-            setResult("chaine vide");
-        }
+
+    clearResult();
+    creation_chaine();
+    if (Chaine_TABR) {
+        setResult(Chaine_TABR);
+    } else {
+        setResult("chaine vide");
     }
-  
+
 }
 // creation de la chaine à inserer dans le fichier
 function creation_chaine() {
@@ -232,7 +234,7 @@ function creation_chaine() {
     Chaine_TABR = "";
     TABR.forEach(function (element, index) {
 
-        Chaine_TABR += element.debut + ":" + element.fin + ";"; 
+        Chaine_TABR += element.debut + ":" + element.fin + ";";
         // si l'abre est null on ajoute null comme valeur 
         if (TABR[index].abr == null) {
             Chaine_TABR += "null";
@@ -253,30 +255,30 @@ function TABR_to_file() {
     // clearResult();
     if (TABR.length > 0) {
         // verifie si le TABR est correct avant tout traitement
-        if (verification() == 1) {
-            clearResult();
-            var nomFichier = document.getElementById("nomFichier").value;
-            creation_chaine();
-            setResult(Chaine_TABR);
-            if (nomFichier) {
+        // if (verification() == 1) {
+        clearResult();
+        var nomFichier = document.getElementById("nomFichier").value;
+        creation_chaine();
+        setResult(Chaine_TABR);
+        if (nomFichier) {
 
-                //On récupère les données dans résultats
-                var resultat = document.getElementById("resultat").textContent;
-                //On créer un objet blob contenant le résultat
-                var blob = new Blob([resultat], {
-                    type: 'plain/text',
-                    endings: 'native'
-                });
+            //On récupère les données dans résultats
+            var resultat = document.getElementById("resultat").textContent;
+            //On créer un objet blob contenant le résultat
+            var blob = new Blob([resultat], {
+                type: 'plain/text',
+                endings: 'native'
+            });
 
-                //On sauvegarde le résultat dans un fichier selon le nom saisi dans le formulaire
-                saveAs(blob, nomFichier + ".txt");
-            } else {
-                clearResult();
-                setResult("Pas de nom de fichier");
-            }
+            //On sauvegarde le résultat dans un fichier selon le nom saisi dans le formulaire
+            saveAs(blob, nomFichier + ".txt");
         } else {
-            setResult("ERREUR: le TABR n'est pas correct");
+            clearResult();
+            setResult("Pas de nom de fichier");
         }
+        // } else {
+        //     setResult("ERREUR: le TABR n'est pas correct");
+        // }
     } else {
         clearResult();
         setResult("Erreur: le TABR est vide");
@@ -327,7 +329,7 @@ function verification() {
                         error = true;
                         setResult("Erreur à la ligne " + (index + 1) + " : le TABR contient un ABR erroné");
                         abr_error = true;
-                    }else if(isNaN(test_tab[i])){
+                    } else if (isNaN(test_tab[i])) {
                         error = true;
                         setResult("Erreur à la ligne " + (index + 1) + " : le TABR contient un ABR avec une valeur qui n'est pas un entier");
                         abr_error = true;
@@ -368,8 +370,12 @@ function insertion_entier() {
         setResult("Erreur saisie entier");
     } else {
         // on verifie si le TABR est correct sinon, ça ne sert à rien d'aller plus loin
-        if (verification() == 1) {
-            clearResult();
+        
+        clearResult();
+
+        if (TABR.length < 1) {
+            setResult("Erreur : Le TABR est vide");
+        } else {
             //Si l'entier se situe avant le debut du premier interval
             //  ou apres la fin du dernier intervalle,
             //  l'algo s'arrete directement donc au mieux --> O(1)
@@ -404,10 +410,8 @@ function insertion_entier() {
                     setResult("Aucun intervalle ne peut contenir l'entier saisi");
                 }
             }
-        } else {
-            clearResult();
-            setResult("Impossible d'inserer la valeur, le TABR n'est pas correct");
         }
+    
     }
     console.log("TABR", TABR);
 }
@@ -424,10 +428,14 @@ function suppression_entier() {
         setResult("Erreur saisie entier");
     } else {
         // on verifie si le TABR est correct sinon, ça en sert à rien d'aller plus loin
-        if (verification() == 1) {
-            clearResult();
+        
+
+        clearResult();
 
 
+        if (TABR.length < 1) {
+            setResult("Erreur : Le TABR est vide");
+        } else {
             //Si l'entier se situe avant le debut du premier interval
             //  ou apres la fin du dernier intervalle,
             //  l'algo s'arrete directement donc au mieux --> O(1)
@@ -457,7 +465,7 @@ function suppression_entier() {
                                 // }
 
                                 setResult("L'entier entier " + entier + " a été supprimé");
-
+                                // pour afficher le resultat
                                 creation_chaine();
                                 setResult(Chaine_TABR);
 
@@ -474,10 +482,8 @@ function suppression_entier() {
                     setResult("Aucun intervalle ne contient l'entier saisi");
                 }
             }
-        } else {
-            clearResult();
-            setResult("Impossible de supprimer la valeur, le TABR n'est pas correct");
         }
+     
     }
     console.log("TABR", TABR);
 }
@@ -494,43 +500,40 @@ function fusion_TABR() {
         setResult("Erreur saisie entier");
     } else {
         // on verifie si le TABR est correct sinon, ça ne sert à rien d'aller plus loin
-        if (verification() == 1) {
-            clearResult();
-            // on verifie que le TABR contient au moins 2 cases pour fusionner
-            if (TABR.length < 2) {
-                setResult("Erreur : Le TABR ne contient pas au moins 2 cases, fusion impossible");
-            } else {
-                // attention aux indices du tableau commençant à 0
-                if (indice < 0 || indice > TABR.length - 2) {
-                    setResult("ERREUR : L'indice saisi doit être au moins égale à 1 et inférieur à la taille du TABR : " + TABR.length);
-                } else {
-                    // fusion de deux cases
-                    TABR[indice].fin = TABR[indice + 1].fin;
-
-                    test_tab = new Array();
-                    if (TABR[indice + 1].abr != null) {
-                        TABR[indice + 1].abr.prefixe_to_tab(TABR[indice + 1].abr);
-                    }
-                    TABR.splice(indice + 1, 1);
-                    // insertion des élements de l'ABR indice i+1 dans l'ABR indice i
-                    test_tab.forEach(element => {
-                        if (TABR[indice].abr == null) {
-                            TABR[indice].abr = new ABR(element);
-                        } else {
-                            TABR[indice].abr.insertion(TABR[indice].abr, element);
-                        }
-                    });
-                    // affichage du résultat
-                    setResult("Deux cases du TABR on été fusionné");
-                    creation_chaine();
-                    setResult(Chaine_TABR);
-                    console.log("TABR", TABR); //affichage dans la console de debug
-                }
-            }
+       
+        clearResult();
+        // on verifie que le TABR contient au moins 2 cases pour fusionner
+        if (TABR.length < 2) {
+            setResult("Erreur : Le TABR ne contient pas au moins 2 cases, fusion impossible");
         } else {
-            clearResult();
-            setResult("Impossible de supprimer la valeur, le TABR n'est pas correct");
+            // attention aux indices du tableau commençant à 0
+            if (indice < 0 || indice > TABR.length - 2) {
+                setResult("ERREUR : L'indice saisi doit être au moins égale à 1 et inférieur à la taille du TABR : " + TABR.length);
+            } else {
+                // fusion de deux cases
+                TABR[indice].fin = TABR[indice + 1].fin;
+
+                test_tab = new Array();
+                if (TABR[indice + 1].abr != null) {
+                    TABR[indice + 1].abr.prefixe_to_tab(TABR[indice + 1].abr);
+                }
+                TABR.splice(indice + 1, 1);
+                // insertion des élements de l'ABR indice i+1 dans l'ABR indice i
+                test_tab.forEach(element => {
+                    if (TABR[indice].abr == null) {
+                        TABR[indice].abr = new ABR(element);
+                    } else {
+                        TABR[indice].abr.insertion(TABR[indice].abr, element);
+                    }
+                });
+                // affichage du résultat
+                setResult("Deux cases du TABR on été fusionné");
+                creation_chaine();
+                setResult(Chaine_TABR);
+                console.log("TABR", TABR); //affichage dans la console de debug
+            }
         }
+       
     }
 
 }
@@ -539,12 +542,12 @@ function fusion_TABR() {
 function TABR_vers_ABR() {
 
     // on verifie si le TABR est correct sinon, ça ne sert à rien d'aller plus loin
-    if (verification() == 1) {
-        clearResult();
 
-        // if (TABR.length < 1) {
-        //     setResult("Erreur : Le TABR est vide");
-        // } else {
+    clearResult();
+
+    if (TABR.length < 1) {
+        setResult("Erreur : Le TABR est vide");
+    } else {
 
         // si le tableau est de taille 1, il suffit de recuperer le seul ABR disponible --> O(1)
         if (TABR.length == 1) {
@@ -594,11 +597,8 @@ function TABR_vers_ABR() {
         setResult("Résultat parcours infixe")
         setResult(Chaine_TABR);
         // console.log(test_tab);
-        // }
-    } else {
-        clearResult();
-        setResult("Erreur : impossible de créer l'ABR, le TABR n'est pas correct");
     }
+ 
 }
 
 
