@@ -10,14 +10,15 @@ class Case {
         this.debut = debut;
         this.fin = fin;
 
-        // si c'est un arbre vide 
+        // si c'est un arbre vide , instanciation obligatoire 
+        //pour appeler les méthodes insertion, suppression, parcours ...
         if (tab[0].trim() == 'null') {
             this.abr = null;
         } else { // sinon on le rempli avec une premiere valeur
 
             this.abr = new ABR(parseInt(tab[0]));
         }
-        // console.log("tab ",tab)
+        // suppression de l'element inséré du tableau
         tab.splice(0, 1);
         tab.forEach(element => {
             this.abr.insertion(this.abr, parseInt(element));
@@ -195,24 +196,6 @@ function createTABR(texte) {
             let fin = parseInt(tabDebFin[1]);
 
             tabABR = tabABR[1].split(':');
-            // ************* verification avant d'inserer non nécessaire ********//
-
-            // if (debut > fin) {
-            //     setResult("Erreur, la ligne " + (index + 1) + " du fichier n'as pas été traité : debut>fin ");
-
-            // } else if (TABR.length > 0) {
-
-            //     if (TABR[TABR.length - 1].fin >= debut) {
-            //         setResult("Erreur, la ligne " + (index + 1) + " du fichier n'as pas été traité : deux intervalles ne peuvent se chevauchés");
-            //     } else {
-            //         TABR.push(new Case(debut, fin, tabABR));
-            //     }
-            //     // console.log("TABR", TABR);
-
-            // } else {
-            //     TABR.push(new Case(debut, fin, tabABR));
-            //     // setResult("test");
-            // }
 
             TABR.push(new Case(debut, fin, tabABR));
         }
@@ -249,21 +232,20 @@ function creation_chaine() {
     Chaine_TABR = "";
     TABR.forEach(function (element, index) {
 
-        Chaine_TABR += element.debut + ":" + element.fin + ";"; // cette ligne est ignoré 
+        Chaine_TABR += element.debut + ":" + element.fin + ";"; 
+        // si l'abre est null on ajoute null comme valeur 
         if (TABR[index].abr == null) {
             Chaine_TABR += "null";
-        } else {
+        } else { // sinon on ajoute le contenu d'un parcours infixe
             element.abr.prefixe_to_chaine(element.abr);
             Chaine_TABR = Chaine_TABR.substring(0, Chaine_TABR.length - 1); // retrait du dernier ":"
         }
-
         Chaine_TABR += "\n";
     });
     // correction d'un bug aleatoire qui ecrit un caractère en debut de chaine dans certains cas
     if (isNaN(parseInt(Chaine_TABR[0]))) {
         Chaine_TABR = Chaine_TABR.substring(1);
     }
-
 }
 // transforme l'objet TABR vers une chaine à écrire dans un fichier
 function TABR_to_file() {
