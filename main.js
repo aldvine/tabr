@@ -6,7 +6,8 @@ var tamp_entier;
 // ***********
 // classe case qui stocke l'abr, et l'intervale
 class Case {
-    constructor(debut, fin, tab) {
+
+    constructor(debut, fin, tab) {// temps O(n*P)
         this.debut = debut;
         this.fin = fin;
 
@@ -20,7 +21,10 @@ class Case {
         }
         // suppression de l'element inséré du tableau
         tab.splice(0, 1);
-        tab.forEach(element => {
+        // temps k*P où k est le nombre d'element à inserer et
+        //  P la profondeur de l'arbre, la complexite de l'insertion au pire est O(P)
+        //  donc O(k*p)
+        tab.forEach(element => { 
             this.abr.insertion(this.abr, parseInt(element));
         });
     }
@@ -36,7 +40,8 @@ class ABR {
     // insertion adapté du cours car impossible de remplacer l'instance de l'objet
     //  par une autre directement
     // on peut remplacer uniquement ses valeurs
-    insertion(abr, val) {
+
+    insertion(abr, val) { // O(P) où P est la profondeur de l'abr
 
         if (val <= abr.val) {
 
@@ -53,7 +58,7 @@ class ABR {
                 this.insertion(abr.sad, val);
         }
     }
-    // parcours prefixe dans une chaine
+    // parcours prefixe dans une chaine, theta(n) où n= nombre de noeuds
     prefixe_to_chaine(abr) {
 
         if (abr != null) {
@@ -62,7 +67,7 @@ class ABR {
             this.prefixe_to_chaine(abr.sad);
         }
     }
-    // parcours infixe dans un tableau
+    // parcours infixe dans un tableau, theta(n)
     infixe_to_tab(abr) {
         if (abr != null) {
 
@@ -71,7 +76,7 @@ class ABR {
             this.infixe_to_tab(abr.sad);
         }
     }
-    // parcours infixe dans une chaine
+    // parcours infixe dans une chaine, theta(n)
     infixe_to_chaine(abr) {
         if (abr != null) {
 
@@ -80,6 +85,7 @@ class ABR {
             this.infixe_to_chaine(abr.sad);
         }
     }
+    // theta(n) où n= nombre de noeuds
     prefixe_to_tab(abr) {
         if (abr != null) {
             test_tab.push(abr.val);
@@ -88,7 +94,7 @@ class ABR {
             this.infixe_to_tab(abr.sad);
         }
     }
-    // recherche de la valeur
+    // recherche de la valeur, O(n)
     rechercher(abr, entier) {
         if (abr != null) {
             if (entier == abr.val) {
@@ -110,7 +116,7 @@ class ABR {
     //  par une autre directement
     // on peut remplacer uniquement ses valeurs, on retourne la valeur de l'arbre .
     // retourn le nouvel abr.
-    suppression(abr, entier) {
+    suppression(abr, entier) { // O(n)
         if (abr != null) {
             if (entier < abr.val) {
                 // trouvé
@@ -140,7 +146,7 @@ class ABR {
             }
         }
     }
-    // adptation de la fonction supprimax du cours
+    // adptation de la fonction supprimax du cours (utile dans suppression)
     supprimax(abr) {
         if (abr.sad == null) {
             tamp_entier = abr.val;
@@ -152,6 +158,7 @@ class ABR {
         }
     }
 }
+
 // affichage ou non du bouton lecture
 window.onload = function () {
     document.getElementById("fichier").onchange = function () {
@@ -168,7 +175,7 @@ function fichier() {
         return;
     }
     //Récupère les données du fichier
-    var reader = new FileReader();
+    var reader = new FileReader(); // temps constant
     var texte;
 
     reader.onload = function (e) {
@@ -177,18 +184,23 @@ function fichier() {
     };
     reader.readAsText(file);
 }
-// creer un TABR a partir d'une chaine
+// creer un TABR a partir d'une chaine O(x*(k*P))
 function createTABR(texte) {
     let tabLigne;
     let tabDebFin;
 
     TABR = new Array; // remise à zero
     // console.log(texte);
-    tabLigne = texte.split('\n');
+    tabLigne = texte.split('\n'); // temps constant (js)
     // console.log("tabLigne", tabLigne);
-    tabLigne.forEach(function (element, index) {
+    
+    // temps  O(x*(k*P))
+    // x --> le nombre de ligne du fichier à traité 
+    // k --> le nombre d'element à inserer dans l'abr
+    // P --> profondeur de l'ABR
+    tabLigne.forEach(function (element, index) { 
 
-        let tabABR = element.split(';');
+        let tabABR = element.split(';'); // constant
         // on verifie que la ligne est valide
         if (tabABR.length > 1) {
             tabDebFin = tabABR[0].split(':');
@@ -229,6 +241,9 @@ function affichage() {
 
 }
 // creation de la chaine à inserer dans le fichier
+// i --> taille du tableau TABR
+// n --> nombre de noeud (parcours prefixe)
+// complexite au pire --> O(i*n)
 function creation_chaine() {
 
     Chaine_TABR = "";
@@ -284,6 +299,8 @@ function TABR_to_file() {
         setResult("Erreur: le TABR est vide");
     }
 }
+
+// complexite à finir 
 // fonction pour tester la validité du TABR
 function verification() {
 
@@ -294,6 +311,11 @@ function verification() {
         error = true;
     } else {
         // pour toutes les cases du TABR
+        // complexité 
+        // k --> nb de cases de TABR
+        // n --> nombre de noeuds d'un abr
+        // i --> nombre d'elements d'un abr à tester
+        // complexite au pire --> verification des abr (k*)
         TABR.forEach(function (element, index) {
 
             // verification si l'intervalle est correct
@@ -320,10 +342,12 @@ function verification() {
             test_tab = new Array;
             // console.log(test_tab);
             if (element.abr != null) {
+                // infixe -> O(n)
                 element.abr.infixe_to_tab(element.abr);
                 // test de ABR 
                 let i = 0;
                 let abr_error = false;
+                // O(i) --> i nombre de parcours de la boucle au pire
                 do {
                     if (test_tab[i] > test_tab[i + 1]) {
                         error = true;
@@ -351,7 +375,7 @@ function verification() {
     // si pas d'erreur le tableau est bien rempli.
     if (!error) {
         setResult("le TABR est bien rempli");
-        creation_chaine();
+        creation_chaine(); // comlpexite O(i*n)
         setResult(Chaine_TABR);
         return 1;
     } else {
