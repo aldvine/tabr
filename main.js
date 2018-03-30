@@ -311,11 +311,10 @@ function verification() {
     } else {
         // pour toutes les cases du TABR
         // complexité 
-        // k --> nb de cases de TABR
+        // i --> nb de cases de TABR
         // n --> nombre de noeuds d'un abr
-        // i --> nombre d'elements d'un abr à tester
         // complexite au pire --> verification des abr (k*n*i) + creation_chaine(k*n)
-        // ainsi --> O(k*n*i)
+        // ainsi --> O(i*n²)
         TABR.forEach(function (element, index) {
 
             // verification si l'intervalle est correct
@@ -347,7 +346,7 @@ function verification() {
                 // test de ABR 
                 let i = 0;
                 let abr_error = false;
-                // O(i) --> i nombre de parcours de la boucle au pire
+                // O(n) --> n nombre de parcours de la boucle au pire
                 do {
                     if (test_tab[i] > test_tab[i + 1]) {
                         error = true;
@@ -375,7 +374,7 @@ function verification() {
     // si pas d'erreur le tableau est bien rempli.
     if (!error) {
         setResult("le TABR est bien rempli");
-        creation_chaine(); // comlpexite O(k*n)
+        creation_chaine(); // comlpexite O(i*n)
         setResult(Chaine_TABR);
         return 1;
     } else {
@@ -386,8 +385,8 @@ function verification() {
 //Permet l'insertion d'un entier rentré par l'utilisateur dans le TABR
 // si on decide de faire l'affichage
 // dans la fonction --> O(i*n*k) 
-//  car complexite de creation_chaine i*n multiplier par le nombre de cases TABR k
-// sinon O(P*k) --> complexite de la fonction insertion vue en cours P * nombre de case TABR
+//  car complexite de creation_chaine i*n multiplier par le nombre de cases TABR i
+// sinon O(P+i) --> complexite de la fonction insertion vue en cours P * nombre de case TABR
 function insertion_entier() {
     //On récupère l'entier
 
