@@ -115,7 +115,7 @@ class ABR {
     // supression d'une valeur : adapté du cours car impossible de remplacer l'instance de l'objet
     //  par une autre directement
     // on peut remplacer uniquement ses valeurs, on retourne la valeur de l'arbre .
-    // retourn le nouvel abr.
+    // retourne le nouvel abr.
     suppression(abr, entier) { // O(n)
         if (abr != null) {
             if (entier < abr.val) {
@@ -270,7 +270,7 @@ function TABR_to_file() {
     // clearResult();
     if (TABR.length > 0) {
         // verifie si le TABR est correct avant tout traitement
-        // if (verification() == 1) {
+        
         clearResult();
         var nomFichier = document.getElementById("nomFichier").value;
         creation_chaine();
@@ -291,17 +291,16 @@ function TABR_to_file() {
             clearResult();
             setResult("Pas de nom de fichier");
         }
-        // } else {
-        //     setResult("ERREUR: le TABR n'est pas correct");
-        // }
+     
     } else {
         clearResult();
         setResult("Erreur: le TABR est vide");
     }
 }
 
-// complexite à finir 
+
 // fonction pour tester la validité du TABR
+// complexite --> O(k*n*i)
 function verification() {
 
     clearResult();
@@ -315,7 +314,8 @@ function verification() {
         // k --> nb de cases de TABR
         // n --> nombre de noeuds d'un abr
         // i --> nombre d'elements d'un abr à tester
-        // complexite au pire --> verification des abr (k*)
+        // complexite au pire --> verification des abr (k*n*i) + creation_chaine(k*n)
+        // ainsi --> O(k*n*i)
         TABR.forEach(function (element, index) {
 
             // verification si l'intervalle est correct
@@ -375,7 +375,7 @@ function verification() {
     // si pas d'erreur le tableau est bien rempli.
     if (!error) {
         setResult("le TABR est bien rempli");
-        creation_chaine(); // comlpexite O(i*n)
+        creation_chaine(); // comlpexite O(k*n)
         setResult(Chaine_TABR);
         return 1;
     } else {
@@ -384,6 +384,10 @@ function verification() {
 }
 
 //Permet l'insertion d'un entier rentré par l'utilisateur dans le TABR
+// si on decide de faire l'affichage
+// dans la fonction --> O(i*n*k) 
+//  car complexite de creation_chaine i*n multiplier par le nombre de cases TABR k
+// sinon O(P*k) --> complexite de la fonction insertion vue en cours P * nombre de case TABR
 function insertion_entier() {
     //On récupère l'entier
 
@@ -416,9 +420,9 @@ function insertion_entier() {
                     if (entier >= TABR[index].debut && entier <= TABR[index].fin) {
                         //Si l'entier appartient à un intervalle, on utilise la fonction, insertion de la classe ABR
                         if (TABR[index].abr == null) {
-                            TABR[index].abr = new ABR(entier);
+                            TABR[index].abr = new ABR(entier); //constant
                         } else {
-                            TABR[index].abr.insertion(TABR[index].abr, entier);
+                            TABR[index].abr.insertion(TABR[index].abr, entier); // O(P) --> p profondeur de l'abr
                         }
                         // console.log(TABR);
                         setResult("Entier inséré");
@@ -439,7 +443,6 @@ function insertion_entier() {
     }
     console.log("TABR", TABR);
 }
-
 
 //Permet la suppression d'un entier 
 function suppression_entier() {
