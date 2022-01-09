@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+
+<!-- Arnaud Loiseau-->
+<!-- Aldvine Blanchard-->
+
+<html lang="fr">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>TABR</title>
+</head>
+
+<body style="text-align:center">
+    <h2>Projet Conception et Analyse d'algorithmes</h2>
+    <p>Vous pouvez afficher la console de debug avec le raccourci F12 puis onglet console si vous voulez avoir des infos supplémentaires
+        comme l'arborescence du TABR ou ABR. Les objets affichés dans la console peuvent être dépliés.</p><p> Vous pouvez voir le
+        résultat de l'affichage demandé en bas de l'écran dans la partie Résultats</p>
+    <hr>
+    <h3>Fichier vers TABR</h3>
+    <input type="file" name="file" id="fichier" />
+    <button type="button" onclick="fichier()" id="startFile" style="visibility: hidden">Lancer la lecture du fichier</button>
+    <br>
+    <hr>
+    <h3>Affichage</h3>
+
+    <button type="button" onclick="affichage()">Affichage</button>
+
+
+    <br>
+    <hr>
+    <h3>vérification</h3>
+
+    <button type="button" onclick="verification()">Lancer la vérification</button>
+
+    <hr>
+    <h3>TABR vers Fichier</h3>
+    Nom fichier :
+    <input type="text" placeholder="nom fichier" id="nomFichier" />
+
+    <button type="button" onclick="TABR_to_file()">Lancer la génération</button>
+    <br>
+    <hr>
+
+
+    <h3>Insertion d'un entier</h3>
+    Entier :
+    <input type="text" placeholder="entier" id="entier" />
+    </p>
+    <button type="button" onclick="insertion_entier()">Lancer l'insertion</button>
+    <br>
+    <hr>
+
+    <h3>Suppression d'un entier</h3>
+    Entier :
+    <input type="text" placeholder="entier" id="entier2" />
+
+    <button type="button" onclick="suppression_entier()">Lancer la suppression</button>
+    <br>
+    <hr>
+
+    <h3>Fusion de deux cases du TABR</h3>
+    Saisir l'indice i (fusion de la case i et i+1):
+    <input type="text" placeholder="indice" id="indice" />
+    <button type="button" onclick="fusion_TABR()">Lancer la fusion</button>
+    <br>
+
+    <hr>
+    <h3>TABR vers ABR</h3>
+    <button type="button" onclick="TABR_vers_ABR()">Lancer la construction de L'ABR</button>
+    <br>
+    <hr>
+
+    <h3>Résultats</h3>
+    <pre id="resultat"></pre>
+</body>
+<script src="FileSaver.js"></script>
+<script src="main.js"></script>
+
+</html>
